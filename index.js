@@ -1,63 +1,24 @@
-import { ApolloServer,gql } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
 import {
   ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageLocalDefault,
 } from 'apollo-server-core';
 import express from 'express';
 import http from 'http';
-import { products , categories } from './data.js'
-
-
-
-const typeDefs = gql`
-
-    type Product {
-      id: ID!
-      name: String!
-      description: String!
-      quantity: Int!
-      price: Float!
-      image: String
-      onSale: Boolean
-    }
-
-    type Category {
-      id: ID!
-      name: String!
-      products:[Product!]!
-    }
-
-    type Query {
-      products: [Product!]!
-      product(id: ID!): Product
-      categories:[Category!]!
-      category(id:ID!): Category
-    }
-   
-    
-`
-
-function selectById(args , datas){
-  const {id} = args
-  return datas.find((data)=> data.id === id) 
-}
+import typeDefs from './schema.js'
+import Category from './resolvers/category.js'
+import Product from './resolvers/product.js'
+import Query from './resolvers/query.js'
+import Mutation from './resolvers/mutation.js';
+import { products , categories , reviews } from './data.js'
 
 const resolvers = {
-  Query: {
-    products: ()=> products,
-    product:(parent , args , context)=> selectById(args,products), 
-    categories:()=> categories,
-    category:(parent , args , context)=> selectById(args,categories), 
-  },
+  Category,
+  Product,
+  Query,
+  Mutation
+}
 
-  Category:{
-    products:(parent,args,context)=> {
-      const {id} = parent
-      return products.filter(product => product.categoryId === id)
-    }
-  }
-
-};
 
 
 async function startApolloServer(typeDefs, resolvers) {
@@ -77,6 +38,11 @@ async function startApolloServer(typeDefs, resolvers) {
       ApolloServerPluginDrainHttpServer({ httpServer }),
       ApolloServerPluginLandingPageLocalDefault({ embed: true }),
     ],
+    context:{
+      products,
+      categories,
+      reviews
+    }
   });
 
   await server.start();

@@ -1,16 +1,16 @@
 import selectById from '../utils.js'
 
 const Query =   {
-  products: (parent , {filter} , {reviews,products})=> {
+  products: (parent , {filter} , {db})=> {
     if(filter){
       const {onSale , avgRating} = filter
-      let filterProducts = [...products]
+      let filterProducts = [...db.products]
       if(typeof onSale === "boolean" ){
-        filterProducts = products.filter((product)=> product.onSale === onSale)
+        filterProducts = db.products.filter((product)=> product.onSale === onSale)
       }
 
       if([0,1,2,3,4,5].includes(avgRating)){
-        const reviewsRatingToMap = reviews.reduce((acc,cur)=> {
+        const reviewsRatingToMap = db.reviews.reduce((acc,cur)=> {
           if(acc[cur.productId] === undefined){
             acc[cur.productId] = {
               sumRating: 0 + cur.rating,
@@ -27,11 +27,11 @@ const Query =   {
       return filterProducts
     }
    
-    return products
+    return db.products
   },
-  product:(parent , args , {products})=> selectById(args,products), 
-  categories:(parent , args , {categories})=> categories,
-  category:(parent , args , {categories})=> selectById(args,categories), 
+  product:(parent , args , {db})=> selectById(args,db.products), 
+  categories:(parent , args , {db})=> db.categories,
+  category:(parent , args , {db})=> selectById(args,db.categories), 
 }
 
 export default Query

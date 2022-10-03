@@ -10,7 +10,7 @@ import Category from './resolvers/category.js'
 import Product from './resolvers/product.js'
 import Query from './resolvers/query.js'
 import Mutation from './resolvers/mutation.js';
-import { products , categories , reviews } from './data.js'
+import {db} from './data.js'
 
 const resolvers = {
   Category,
@@ -24,9 +24,7 @@ const resolvers = {
 async function startApolloServer(typeDefs, resolvers) {
   // Required logic for integrating with Express
   const app = express();
-  // Our httpServer handles incoming requests to our Express app.
-  // Below, we tell Apollo Server to "drain" this httpServer,
-  // enabling our servers to shut down gracefully.
+ 
   const httpServer = http.createServer(app);
 
   const server = new ApolloServer({
@@ -39,9 +37,7 @@ async function startApolloServer(typeDefs, resolvers) {
       ApolloServerPluginLandingPageLocalDefault({ embed: true }),
     ],
     context:{
-      products,
-      categories,
-      reviews
+      db
     }
   });
 

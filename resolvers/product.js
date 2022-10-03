@@ -1,12 +1,12 @@
 
 const Product= {
-  category:(parent , args , {categories})=>{
+  category:(parent , args , {db})=>{
     const {categoryId} = parent
-    return categories.find(category => category.id === categoryId)
+    return db.categories.find(category => category.id === categoryId)
   },
-  review:(parent , {filter} , {reviews})=> {
+  review:(parent , {filter} , {db})=> {
     const {id} = parent
-    const productReviews = reviews.filter(review => review.productId === id)
+    const productReviews = db.reviews.filter(review => review.productId === id)
     if(filter && filter.rating){
       return productReviews.filter(({rating})=> rating >= filter.rating)
     }

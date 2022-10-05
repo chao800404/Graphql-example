@@ -1,6 +1,6 @@
 {
   "watch": [
-    "src"
+    "./**/*.ts"
   ],
   "exec": "npm start",
   "ext": "json, ts"

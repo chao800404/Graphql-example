@@ -1,5 +1,5 @@
-import { ApolloServer, ExpressContext } from 'apollo-server-express';
-import { PrismaClient, Prisma } from '@prisma/client'
+import { ApolloServer } from 'apollo-server-express';
+import { PrismaClient } from '@prisma/client'
 import {
   ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageLocalDefault,

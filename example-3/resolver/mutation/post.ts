@@ -1,9 +1,8 @@
-import { error } from 'console'
-import { MutationResolver } from '../resolver/type'
 
+import { PostMuation} from './type'
 
+export const postResolver:PostMuation = {
 
-export const Mutation: MutationResolver = {
   postCreate: async (_, { input }, { prisma }) => {
     const { title, content } = input
     if (!title || !content) {

@@ -1,6 +1,5 @@
-import { Post } from '@prisma/client'
-import { prisma } from '../src/index'
-
+import { Post,User } from '@prisma/client'
+import { ResolverProps } from '../base'
 
 
 type PostPayloadType<T> = {
@@ -8,14 +7,19 @@ type PostPayloadType<T> = {
   post: T | null;
 }
 
-type ResolverProps<T, J> = (parent: any, args: T, content: { prisma: typeof prisma }) => Promise<J>
-
-export interface QueryResolver {
-  posts: ResolverProps<any, Post[]>
+type PostPayloadType = {
+  userErrors:{message: string}[],
+  user:User | null
 }
 
-export interface MutationResolver {
+
+
+export interface PostMuation {
   postCreate: ResolverProps<{ input: Post }, PostPayloadType<Post>>
   postUpdate: ResolverProps<{ postId: Int, input: Post }, PostPayloadType<Post>>
   postDelete: ResolverProps<{ postId: Int }, PostPayloadType<Post>>
+}
+
+export interface authMutation {
+  signup:ResolverProps<User , PostPayloadType>
 }

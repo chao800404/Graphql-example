@@ -1,6 +1,6 @@
-import { QueryResolver } from './type'
+import { PostResolver } from './type'
 
-export const Query: QueryResolver = {
+export const postResolver:PostResolver = {
   posts: async (_, __, { prisma }) => {
     const posts = await prisma.post.findMany({
       orderBy: {
@@ -10,4 +10,3 @@ export const Query: QueryResolver = {
     return posts
   }
 }
-

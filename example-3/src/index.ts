@@ -35,9 +35,7 @@ async function startApolloServer({ typeDefs, resolvers }: ApolloConfig) {
       ApolloServerPluginDrainHttpServer({ httpServer }),
       ApolloServerPluginLandingPageLocalDefault({ embed: true })
     ],
-    context: {
-      prisma
-    }
+    context: ({req,res})=>({prisma, req , res})
   });
 
   await server.start();

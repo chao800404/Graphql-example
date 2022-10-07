@@ -3,6 +3,7 @@ import { z } from "zod";
 import bcrypt from 'bcrypt';
 import validator from 'validator'
 import jwt from 'jsonwebtoken'
+import cookie from 'cookie'
 
 
 const jwt_key = process.env.JWT_TOKEN_KEY as string
@@ -26,10 +27,9 @@ const userSchema = z.object({
 
 export const authResolver:authMutation = {
 
-  signup:async (_,{  name , email , password } ,{ prisma })=> {
+  signup:async (_,{  name , email , password } ,{ prisma , res })=> {
     try {
       const parse = userSchema.safeParse({ name , email , password})
-
       if(parse.success){
          const { data: { name, email, password }} = parse
          const hashPassword = await bcrypt.hash(password , 10)
@@ -41,14 +41,20 @@ export const authResolver:authMutation = {
             password:hashPassword
           }
         })
-        console.log(user)
-  
+
         const token = signToken(user.id, user.email)
+
+        res.setHeader('Set-Cookie', cookie.serialize('newToken',token, {
+          httpOnly: true,
+          maxAge: 60 * 60 * 24 * 180 // 3 month
+        }));
+
         return {
           userErrors:[],
           token,
           user
         }
+
   
       }
       const errors = parse.error.issues.map(issue => {

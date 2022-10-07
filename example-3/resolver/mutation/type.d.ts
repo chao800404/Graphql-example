@@ -7,9 +7,10 @@ type PostPayloadType<T> = {
   post: T | null;
 }
 
-type PostPayloadType = {
-  userErrors:{message: string}[],
-  user:User | null
+type UserPayloadType = {
+  userErrors:{message: string}[];
+  token: string | null ;
+  user: User | null;
 }
 
 
@@ -21,5 +22,5 @@ export interface PostMuation {
 }
 
 export interface authMutation {
-  signup:ResolverProps<User , PostPayloadType>
+  signup:ResolverProps<User , UserPayloadType>
 }

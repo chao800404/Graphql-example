@@ -1,5 +1,5 @@
 import { ApolloServer } from 'apollo-server-express';
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient , User } from '@prisma/client'
 import {
   ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageLocalDefault,
@@ -7,20 +7,27 @@ import {
 import express from 'express';
 import http from 'http';
 import { typeDefs } from './schema'
-import { Query, Mutation } from '../resolver'
+import { Query, Mutation , Profile } from '../resolver'
+import cookie from 'cookie'
+import JWT from 'jsonwebtoken'
+import {ApolloContext} from '../resolver/base'
 
-
+const jwt_key = process.env.JWT_TOKEN_KEY as string
 
 interface ApolloConfig {
   typeDefs: typeof typeDefs
   resolvers: typeof resolvers
 }
 
+
+
+
 export const prisma = new PrismaClient()
 
 const resolvers = {
   Query,
-  Mutation
+  Mutation,
+  Profile
 }
 
 async function startApolloServer({ typeDefs, resolvers }: ApolloConfig) {
@@ -35,7 +42,18 @@ async function startApolloServer({ typeDefs, resolvers }: ApolloConfig) {
       ApolloServerPluginDrainHttpServer({ httpServer }),
       ApolloServerPluginLandingPageLocalDefault({ embed: true })
     ],
-    context: ({req,res})=>({prisma, req , res})
+    context: ({req,res}):ApolloContext=>{
+
+      const token = cookie.parse(req.headers.cookie || "").newToken
+      const user  = (token ? JWT.verify(token , jwt_key) : null) as User | null 
+      
+      return {
+        prisma,
+        user, 
+        req, 
+        res
+      }
+    }
   });
 
   await server.start();

@@ -1,34 +1,43 @@
 
-import { PostMuation} from './type'
+import { PostMuation } from './type'
+import { canUserMutation } from '../../utils/canUserMutation'
+import { z } from "zod";
+
 
 export const postResolver:PostMuation = {
 
-  postCreate: async (_, { input }, { prisma }) => {
-    const { title, content } = input
-    if (!title || !content) {
+  postCreate: async (_, { input }, { prisma , user }) => {
+    try{
+      const { title, content } = input
+      if (!title || !content) throw new Error("Please provide title and content")
+      if(!user) throw new Error("You must be logged in")
+      const post = await prisma.post.create({
+        data: {
+          title,
+          content,
+          userId: user.id 
+        }
+      })
       return {
-        userErrors: [{
-          message: "Please provide title and content"
-        }],
-        post: null
+        userErrors: [],
+        post
       }
-    }
-    const post = await prisma.post.create({
-      data: {
-        title,
-        content,
-        userId: 1
+    }catch(err){
+      const {message} = err as Error
+      return {
+        userErrors: [{message}],
+        post:null
       }
-    })
-    return {
-      userErrors: [],
-      post
     }
   },
 
-  postUpdate: async (_, { postId, input }, { prisma }) => {
+  postUpdate: async (_, { postId, input }, { prisma  , user}) => {
     try {
       const { title, content } = input
+      const userId = user ? user.id : 0
+      const post = await canUserMutation({postId , userId: userId , prisma})
+
+      if (!post) throw new Error("You can't edit this post")
 
       const existingPost = await prisma.post.findUnique({
         where: {
@@ -36,14 +45,7 @@ export const postResolver:PostMuation = {
         },
       })
 
-      if ((!title && !content) || !existingPost) {
-        return {
-          userErrors: [{
-            message: "Please provide title or content and postId"
-          }],
-          post: null
-        }
-      }
+      if ((!title && !content) || !existingPost) throw new Error("Please provide title or content and postId")
 
       return {
         userErrors: [],
@@ -58,41 +60,67 @@ export const postResolver:PostMuation = {
         })
       }
 
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      const {message} = err as Error
       return {
-        userErrors: [{
-          message: "Something error"
-        }],
-        post: null
+        userErrors: [{message}],
+        post:null
       }
     }
   },
 
-  postDelete:async (_, { postId }, { prisma })=> {
-    const existingPost = await prisma.post.findUnique({
-      where: {
-        id: Number(postId)
-      },
-    })
-
-    if (!existingPost) {
+  postPublish:async(_,{postId , published},{prisma , user})=> {
+    try {
+      const userId = user ? user.id : 0
+      const post = await canUserMutation({postId , userId: userId , prisma})
+      const parse = z.boolean().safeParse(published)
+  
+      if (!post) throw new Error("You can't edit this post")
+      if (!parse.success) throw new Error(parse.error.issues[0].message)
+  
       return {
-        userErrors: [{
-          message: "Please provide the correct Id"
-        }],
-        post: null
+        userErrors: [],
+        post: await prisma.post.update({
+          where: {
+            id: Number(postId),
+          },
+          data:{
+            published
+          }
+        })
+      }
+
+    }catch(err){
+      const {message} = err as Error
+      return {
+        userErrors: [{message}],
+        post:null
       }
     }
+  },
 
-    return {
-      userErrors: [],
-      post: await prisma.post.delete({
-        where: {
-          id: Number(postId)
-        }
-      })
+  postDelete:async (_, { postId }, { prisma , user })=> {
+    try {
+      const userId = user ? user.id : 0
+      const post = await canUserMutation({postId , userId: userId , prisma})
+  
+      if (!post) throw new Error("You can't edit this post")
+  
+      return {
+        userErrors: [],
+        post: await prisma.post.delete({
+          where: {
+            id: Number(postId),
+          }
+        })
+      }
+
+    }catch(err){
+      const {message} = err as Error
+      return {
+        userErrors: [{message}],
+        post:null
+      }
     }
-
   }
 }

@@ -11,16 +11,7 @@ type UserPayloadType = {
 
 
 
-export interface PostResolver {
-  posts: ResolverProps<any, Post[]>
-}
-
-export interface UserResolver {
-  me: ResolverProps<any ,  UserPayloadType>
-}
 
 export interface ProfileResolver {
-  profile:ResolverProps<any ,  Prisma.Prisma__ProfileClient<Profile | null>>
+   user:ResolverProps<any ,  Prisma.Prisma__ProfileClient<User | null>>
 }
-
-

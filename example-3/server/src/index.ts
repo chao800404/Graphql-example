@@ -13,7 +13,6 @@ import { Query, Mutation , Profile , User , Post } from '../resolver'
 import cookie from 'cookie'
 import JWT from 'jsonwebtoken'
 import cors from 'cors'
-import { json } from 'body-parser';
 
 
 
@@ -23,9 +22,6 @@ interface ApolloConfig {
   typeDefs: typeof typeDefs
   resolvers: typeof resolvers
 }
-
-
-const port = process.env.node_env === 'production'? process.env.PORT : 5000
 
 
 
@@ -72,9 +68,9 @@ async function startApolloServer({ typeDefs, resolvers }: ApolloConfig) {
   app.use(cors())
   server.applyMiddleware({ app, path: "/" });
 
-  await new Promise(resolve => httpServer.listen({ port:port }, resolve as any));
+  await new Promise(resolve => httpServer.listen({ port: 5000 }, resolve as any));
 
-  console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`);
+  console.log(`🚀 Server ready at http://localhost:5000${server.graphqlPath}`);
 }
 
 

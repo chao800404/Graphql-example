@@ -23,8 +23,6 @@ const GET_POSTS = gql`
 export default function Posts() {
   const { loading, error, data } = useQuery(GET_POSTS);
 
-  console.log(loading, error, data);
-
   if (loading) return <div>Loading</div>;
   if (error) return <div>{error}</div>;
 

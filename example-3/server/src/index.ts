@@ -46,6 +46,7 @@ async function startApolloServer({ typeDefs, resolvers }: ApolloConfig) {
     resolvers,
     cache:"bounded",
     csrfPrevention: true,
+    introspection: process.env.NODE_ENV !== 'production',
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       ApolloServerPluginLandingPageLocalDefault({ embed: true }),

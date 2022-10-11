@@ -17,6 +17,7 @@ import cors from 'cors'
 
 
 const jwt_key = process.env.JWT_TOKEN_KEY as string
+const port = process.env.PORT || 5000
 
 interface ApolloConfig {
   typeDefs: typeof typeDefs
@@ -68,7 +69,7 @@ async function startApolloServer({ typeDefs, resolvers }: ApolloConfig) {
   app.use(cors())
   server.applyMiddleware({ app, path: "/" });
 
-  await new Promise(resolve => httpServer.listen({ port: 5000 }, resolve as any));
+  await new Promise(resolve => httpServer.listen({ port }, resolve as any));
 
   console.log(`🚀 Server ready at http://localhost:5000${server.graphqlPath}`);
 }

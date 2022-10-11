@@ -1,1 +1,0 @@
-{"version":3,"file":"post.js","sourceRoot":"","sources":["../../../resolver/Query/post.ts"],"names":[],"mappings":";;;;;;;;;;;;AAEa,QAAA,YAAY,GAAgB;IACvC,KAAK,EAAE,CAAO,CAAC,EAAE,EAAE,EAAE,EAAE,MAAM,EAAE,EAAE,EAAE;QACjC,MAAM,KAAK,GAAG,MAAM,MAAM,CAAC,IAAI,CAAC,QAAQ,CAAC;YACvC,OAAO,EAAE;gBACP,SAAS,EAAE,KAAK;aACjB;SACF,CAAC,CAAA;QACF,OAAO,KAAK,CAAA;IACd,CAAC,CAAA;CACF,CAAA"}

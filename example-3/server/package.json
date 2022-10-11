@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "start": "ts-node src/index.ts",
-    "build": "tsc -w",
+    "production":"node dist/src/index.js",
+    "build": "tsc",
     "dataPush": "npx prisma db push",
     "dataGenerate": "prisma generate"
   },

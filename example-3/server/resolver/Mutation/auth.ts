@@ -29,11 +29,13 @@ export const authResolver:authMutation = {
   signup:async (_,{  name , email , password , bio } ,{ prisma , res })=> {
     try {
       const parse = userSchema.safeParse({email,password})
+
       if(parse.success){
          const { data: { email, password }} = parse
          const hashPassword = await bcrypt.hash(password , 10)
 
-         const user = await prisma.user.create({
+
+        const user = await prisma.user.create({
           data:{
             name,
             email,

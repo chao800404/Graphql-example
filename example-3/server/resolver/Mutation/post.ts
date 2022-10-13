@@ -73,21 +73,23 @@ export const postResolver:PostMuation = {
     try {
       const userId = user ? user.id : 0
       const post = await canUserMutation({postId , userId: userId , prisma})
+
       const parse = z.boolean().safeParse(published)
   
       if (!post) throw new Error("You can't edit this post")
       if (!parse.success) throw new Error(parse.error.issues[0].message)
-  
+      const updatePost = await prisma.post.update({
+        where: {
+          id: Number(postId),
+        },
+        data:{
+          published
+        }
+      })
+      console.log(updatePost)
       return {
         userErrors: [],
-        post: await prisma.post.update({
-          where: {
-            id: Number(postId),
-          },
-          data:{
-            published
-          }
-        })
+        post: updatePost
       }
 
     }catch(err){

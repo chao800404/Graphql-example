@@ -8,24 +8,27 @@ import { useQuery, gql } from "@apollo/client";
 
 const GET_PROFILE = gql`
   query Profile($userId: ID!) {
-    profile(userId: $userId) {
-      id
-      user {
-        posts {
-          title
+      profile(userId: $userId) {
           id
-          content
-          createdAt
-          published
-        }
-        email
-        name
-        id
+          isMyProfile
+          bio
+          user {
+              posts {
+                  title
+                  id
+                  content
+                  createdAt
+                  published
+              }
+              email
+              name
+              id
+          }
       }
-      bio
-    }
   }
 `;
+
+
 
 export default function Profile() {
   const { id } = useParams();
@@ -33,29 +36,27 @@ export default function Profile() {
     variables: { userId: id },
   });
 
-  if (loading) return <div>Loading</div>;
   if (error) return <div>{error}</div>;
+  if (loading) return <div>Loading</div>;
 
   const {
-    profile: { bio, user },
+    profile: { bio, user, isMyProfile },
   } = data;
-
-  console.log(data);
 
   return (
     <div>
       <div
         style={{
-          marginBottom: "2rem",
-          display: "flex ",
-          justifyContent: "space-between",
+            display: "flex ",
+            marginBottom: "2rem",
+            justifyContent: "space-between",
         }}
       >
         <div>
           <h1>{user.name}</h1>
           <p>{bio}</p>
         </div>
-        <div>{"profile" ? <AddPostModal /> : null}</div>
+        <div>{isMyProfile ? <AddPostModal /> : null}</div>
       </div>
       <div>
         {user.posts?.map((post) => (
@@ -66,8 +67,8 @@ export default function Profile() {
             date="1111"
             user={user.name}
             published={post.published}
+            isMyProfile={isMyProfile}
             id={post.id}
-            isMyProfile={"fewifwe"}
           />
         ))}
       </div>

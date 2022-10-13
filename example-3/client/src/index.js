@@ -6,10 +6,27 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from "@apollo/client";
+// import { setContext } from "@apollo/client/link/context";
+
+const uri =
+  process.env.NODE_ENV !== "production"
+    ? "http://localhost:5000/graphql"
+    : "https://graphql-example-production.up.railway.app/graphql";
+
+const httpLink = createHttpLink({
+  uri,
+  credentials: "include",
+});
+
 
 const client = new ApolloClient({
-  uri: "http://localhost:5000/",
+  link: httpLink,
   cache: new InMemoryCache(),
 });
 

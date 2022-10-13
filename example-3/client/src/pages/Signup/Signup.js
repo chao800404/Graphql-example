@@ -1,16 +1,52 @@
 import Button from "@restart/ui/esm/Button";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { Form } from "react-bootstrap";
+import {useMutation , gql} from "@apollo/client";
+
+
+const SIGNUP_MUTATION = gql`
+  mutation Signup($name: String!, $email: String!, $password: String!, $bio: String!) {
+    signup(name: $name, email: $email, password: $password, bio: $bio) {
+      userErrors {
+        message
+      }
+      user {
+        name
+        email
+        id
+      }
+    }
+  }
+`
+
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
-
-  const handleClick = () => {};
-
   const [error, setError] = useState(null);
+  const [mutationFunction , {loading , data ,error:MutationError}] = useMutation(SIGNUP_MUTATION)
+
+  const handleClick = async() => {
+    await mutationFunction({variables:{
+        name,
+        password,
+        email,
+        bio
+      }})
+  };
+
+
+  console.log(data)
+
+  useEffect(()=> {
+    if(data){
+      const {signup:{userErrors}} = data
+      userErrors.length > 0 && setError(userErrors.join(''))
+    }
+  },[data])
+
 
   return (
     <div>

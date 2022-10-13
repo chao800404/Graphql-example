@@ -24,9 +24,12 @@ interface ApolloConfig {
   resolvers: typeof resolvers
 }
 
-
-
 export const prisma = new PrismaClient()
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true 
+};
 
 const resolvers = {
   Query,
@@ -56,7 +59,7 @@ async function startApolloServer({ typeDefs, resolvers }: ApolloConfig) {
 
       const token = cookie.parse(req.headers.cookie || "").newToken
       const user  = (token ? JWT.verify(token , jwt_key) : null) as Auth | null 
-      
+
       return {
         prisma,
         user, 
@@ -67,8 +70,9 @@ async function startApolloServer({ typeDefs, resolvers }: ApolloConfig) {
   });
 
   await server.start();
-  app.use(cors())
-  server.applyMiddleware({ app, path: "/" });
+
+
+  server.applyMiddleware({ app ,cors:corsOptions });
 
   await new Promise(resolve => httpServer.listen({ port }, resolve as any));
 

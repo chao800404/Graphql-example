@@ -6,7 +6,7 @@ import DataLoader from "dataloader";
 type BatchUsers = (ids: number[] ) => Promise<User[]> 
 
 const batchUsers:BatchUsers  = async(ids)=> {
-  console.log(ids)
+
   const users = await prisma.user.findMany({
     where:{
       id:{

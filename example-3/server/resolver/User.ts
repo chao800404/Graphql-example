@@ -9,7 +9,6 @@ type UserParentType = {
 export const User:UserType = {
   posts: async (parent:UserParentType ,_, { prisma , user }) => {
     const isOwnProfile = parent.id === user?.id
-    console.log("server run")
  
     if(isOwnProfile ){
       return prisma.post.findMany({
